@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useProjectStore } from '../store/projectStore';
 import { useInvestmentStore } from '../store/investmentStore';
 import { useAuthStore } from '../store/authStore';
@@ -13,7 +13,6 @@ import { Modal } from '../components/ui/Modal';
 import { Button } from '../components/ui/Button';
 import { InvestmentRequestForm } from '../components/projects/InvestmentRequestForm';
 import { ReportIssueForm } from '../components/projects/ReportIssueForm';
-import { ChatPanel } from '../components/chat/ChatPanel';
 import { projectService } from '../services/projectService';
 import { engagementService } from '../services/engagementService';
 import { reportService } from '../services/reportService';
@@ -35,6 +34,7 @@ const badgeTone = {
 export const ProjectDetailPage = () => {
   const { projectId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const { selectedProject, fetchProjectById, loading } = useProjectStore();
   const {
     requestInvestment,
@@ -430,7 +430,6 @@ export const ProjectDetailPage = () => {
             </div>
           </Card>
 
-          <ChatPanel projectId={projectId} receiverId={selectedProject.creatorId} />
         </div>
 
         <div className="space-y-6">

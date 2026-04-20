@@ -66,6 +66,24 @@ export const Header = () => {
             </>
           ) : (
             <>
+              {(user.role === ROLES.INVESTOR || user.role === ROLES.CREATOR) ? (
+                <Link to="/chats" className="hidden lg:block" title="Messages">
+                  <Button tone="slate" variant="outline" className="px-3">
+                    <svg
+                      className="h-5 w-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+                    </svg>
+                  </Button>
+                </Link>
+              ) : null}
               <Link to={dashboardTarget} className="hidden lg:block">
                 <Button tone="slate" variant="outline">
                   Dashboard
@@ -113,6 +131,15 @@ export const Header = () => {
                 {item.label}
               </NavLink>
             ))}
+            {(user.role === ROLES.INVESTOR || user.role === ROLES.CREATOR) ? (
+              <Link
+                className="rounded-xl px-3 py-2 text-sm font-medium text-slate-700"
+                to="/chats"
+                onClick={() => setMobileOpen(false)}
+              >
+                Messages
+              </Link>
+            ) : null}
             <Link
               className="rounded-xl px-3 py-2 text-sm font-medium text-slate-700"
               to={dashboardTarget}

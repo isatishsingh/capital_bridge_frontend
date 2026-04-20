@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useProjectStore } from '../store/projectStore';
 import { useInvestmentStore } from '../store/investmentStore';
@@ -20,6 +20,7 @@ const statusTone = {
 };
 
 export const CustomerDashboardPage = () => {
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const { projects, fetchProjects, loading: projectsLoading } = useProjectStore();
   const {
@@ -71,6 +72,14 @@ export const CustomerDashboardPage = () => {
     } catch (error) {
       notify(error.message, 'error');
     }
+  };
+
+  const handleOpenChat = (row) => {
+    if (!row?.projectId || !row?.investorId) {
+      notify('Unable to open this chat thread right now.', 'error');
+      return;
+    }
+    navigate(`/chats?projectId=${row.projectId}&receiverId=${row.investorId}`);
   };
 
   return (
@@ -180,8 +189,13 @@ export const CustomerDashboardPage = () => {
                 label: 'Actions',
                 render: (row) => {
                   const status = normalizeStatus(row.status);
-                  return status === 'PENDING' ? (
-                    <div className="flex gap-2">
+                  return (
+                    <div className="flex flex-wrap gap-2">
+                      <Button className="px-4 py-2" tone="slate" variant="outline" onClick={() => handleOpenChat(row)}>
+                        Chat
+                      </Button>
+                      {status === 'PENDING' ? (
+                        <>
                       <Button className="px-4 py-2" onClick={() => handleStatusUpdate(row.id, 'APPROVED')}>
                         Approve
                       </Button>
@@ -193,9 +207,9 @@ export const CustomerDashboardPage = () => {
                       >
                         Reject
                       </Button>
+                        </>
+                      ) : null}
                     </div>
-                  ) : (
-                    <span className="text-sm text-slate-500">Decision recorded</span>
                   );
                 }
               }

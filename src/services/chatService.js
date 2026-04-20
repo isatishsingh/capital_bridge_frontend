@@ -18,7 +18,18 @@ const attachSenderNames = async (messages) => {
 };
 
 export const chatService = {
-  getMessages: async ({ projectId, receiverId }) => {
+  getConversations: async () => {
+    const { data } = await api.get('/api/chat/conversations');
+    return asArray(data);
+  },
+  getMessages: async ({ conversationId, projectId, receiverId }) => {
+    if (conversationId) {
+      const { data } = await api.get('/api/chat/messages/by-conversation', {
+        params: { conversationId }
+      });
+      return attachSenderNames(data);
+    }
+
     const { data } = await api.get('/api/chat/messages', {
       params: { projectId, receiverId }
     });

@@ -3,10 +3,10 @@ import { useChatStore } from '../../store/chatStore';
 import { Button } from '../ui/Button';
 import { formatDate } from '../../utils/formatters';
 
-export const ChatPanel = ({ projectId, receiverId }) => {
+export const ChatPanel = ({ projectId, receiverId, title }) => {
   const { rooms, fetchMessages, sendMessage, loading } = useChatStore();
   const [message, setMessage] = useState('');
-  const roomKey = `${projectId}-${receiverId || 'unknown'}`;
+  const roomKey = `p:${projectId}-${receiverId || 'unknown'}`;
   const messages = rooms[roomKey] || [];
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export const ChatPanel = ({ projectId, receiverId }) => {
     <div className="surface p-6">
       <div className="mb-5 flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold text-ink">Founder chat</h3>
+          <h3 className="text-xl font-bold text-ink">{title || 'Founder chat'}</h3>
           <p className="text-sm text-slate-500">Keep conversations attached to the project record.</p>
         </div>
       </div>

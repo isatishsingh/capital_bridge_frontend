@@ -24,6 +24,7 @@ import { CreatorKycPage } from './pages/CreatorKycPage';
 import { ContactPage } from './pages/ContactPage';
 import { TermsPage } from './pages/TermsPage';
 import { RouteErrorPage } from './pages/RouteErrorPage';
+import { ChatInboxPage } from './pages/ChatInboxPage';
 
 export const router = createBrowserRouter([
   {
@@ -40,8 +41,14 @@ export const router = createBrowserRouter([
       { path: 'projects', element: <ProjectsPage /> },
       { path: 'projects/:projectId', element: <ProjectDetailPage /> },
       {
+        element: <ProtectedRoute allowedRoles={[ROLES.INVESTOR, ROLES.CREATOR]} />,
+        children: [{ path: 'chats', element: <ChatInboxPage /> }]
+      },
+      {
         element: <ProtectedRoute allowedRoles={[ROLES.INVESTOR]} />,
-        children: [{ path: 'investor/dashboard', element: <InvestorDashboardPage /> }]
+        children: [
+          { path: 'investor/dashboard', element: <InvestorDashboardPage /> }
+        ]
       },
       {
         element: <ProtectedRoute allowedRoles={[ROLES.CREATOR]} />,

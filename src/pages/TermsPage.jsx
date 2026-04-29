@@ -3,7 +3,7 @@ import { Card } from '../components/ui/Card';
 const sections = [
   {
     title: 'Platform use',
-    body: 'CrowdSpring provides software for discovering campaigns, managing investment requests, and coordinating payments. It does not provide investment advice.'
+    body: 'CapitalBridge provides software for discovering campaigns, managing investment requests, and coordinating payments. It does not provide investment advice.'
   },
   {
     title: 'Investor responsibilities',
@@ -24,7 +24,7 @@ export const TermsPage = () => (
     <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent">Terms & policies</p>
     <h1 className="mt-3 section-title">Transparent rules for every role.</h1>
     <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">
-      These summaries describe how the CrowdSpring product is intended to be used. Replace or extend this copy with
+      These summaries describe how the CapitalBridge product is intended to be used. Replace or extend this copy with
       counsel-reviewed legal text for your production launch.
     </p>
     <div className="mt-10 grid gap-6">

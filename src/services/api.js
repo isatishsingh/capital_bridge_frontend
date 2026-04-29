@@ -7,7 +7,7 @@ const resolvedBaseUrl =
 
 if (!import.meta.env.VITE_API_BASE_URL && import.meta.env.DEV) {
   console.warn(
-    '[CrowdSpring] VITE_API_BASE_URL is not set. Using http://localhost:8080. Create a .env file (see .env.example) if your API runs elsewhere.'
+    '[CapitalBridge] VITE_API_BASE_URL is not set. Using http://localhost:8080. Create a .env file (see .env.example) if your API runs elsewhere.'
   );
 }
 

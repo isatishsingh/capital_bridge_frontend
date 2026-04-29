@@ -5,7 +5,7 @@ export const AuthLayout = () => (
     <div className="hidden flex-col justify-between bg-[linear-gradient(135deg,_rgba(15,118,110,0.96),_rgba(7,17,31,1))] p-12 text-white lg:flex">
       <div>
         <div className="text-sm font-semibold uppercase tracking-[0.24em] text-white/70">
-          CrowdSpring
+          CapitalBridge
         </div>
         <h1 className="mt-8 max-w-xl font-display text-6xl font-bold leading-tight">
           Fund ambitious ideas with trust, transparency, and clean execution.

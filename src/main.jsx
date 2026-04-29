@@ -9,7 +9,7 @@ import { getRazorpayKeyIdError } from './utils/razorpayKey';
 if (import.meta.env.DEV) {
   const razorpayKeyIssue = getRazorpayKeyIdError(import.meta.env.VITE_RAZORPAY_KEY);
   if (razorpayKeyIssue) {
-    console.warn('[CrowdSpring] Razorpay:', razorpayKeyIssue);
+    console.warn('[CapitalBridge] Razorpay:', razorpayKeyIssue);
   }
 }
 

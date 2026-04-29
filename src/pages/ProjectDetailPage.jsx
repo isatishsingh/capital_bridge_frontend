@@ -206,7 +206,7 @@ export const ProjectDetailPage = () => {
        */
       const razorpay = new window.Razorpay({
         key: keyId,
-        name: 'CrowdSpring',
+        name: 'CapitalBridge',
         description: selectedProject?.title || 'Investment payment',
         order_id: orderId,
         handler: async (response) => {

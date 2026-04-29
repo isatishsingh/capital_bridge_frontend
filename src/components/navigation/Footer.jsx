@@ -4,9 +4,9 @@ export const Footer = () => (
   <footer className="mt-24 border-t border-slate-200 bg-white">
     <div className="page-shell grid gap-10 py-14 md:grid-cols-[1.2fr_repeat(3,1fr)]">
       <div className="max-w-md">
-        <div className="font-display text-2xl font-bold text-ink">CrowdSpring</div>
+        <div className="font-display text-2xl font-bold text-ink">CapitalBridge</div>
         <p className="mt-4 text-sm leading-7 text-slate-600">
-          A modern equity crowdfunding experience built for startup founders, investors, and
+          A modern equity e-funding experience built for startup founders, investors, and
           platform operators who need clarity at every stage.
         </p>
       </div>
@@ -30,7 +30,7 @@ export const Footer = () => (
           <Link className="block hover:text-accent" to="/contact">
             Contact page
           </Link>
-          <p>help@crowdspring.app</p>
+          <p>help@CapitalBridge.app</p>
           <p>+91 80 4040 9090</p>
         </div>
       </div>

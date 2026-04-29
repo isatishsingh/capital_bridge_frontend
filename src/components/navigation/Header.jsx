@@ -33,12 +33,12 @@ export const Header = () => {
         <div className="flex min-w-0 flex-1 items-center gap-6 lg:gap-10">
           <Link to="/" className="flex shrink-0 items-center gap-3" onClick={() => setMobileOpen(false)}>
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ink text-lg font-black text-white">
-              CS
+              CB
             </div>
             <div className="min-w-0">
-              <div className="font-display text-lg font-bold text-ink">CrowdSpring</div>
+              <div className="font-display text-lg font-bold text-ink">CapitalBridge</div>
               <div className="hidden text-xs uppercase tracking-[0.22em] text-slate-500 sm:block">
-                Equity crowdfunding
+                Equity e-funding
               </div>
             </div>
           </Link>

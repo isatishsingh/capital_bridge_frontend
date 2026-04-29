@@ -1,5 +1,5 @@
-const TOKEN_KEY = 'crowdspring_token';
-const USER_KEY = 'crowdspring_user';
+const TOKEN_KEY = 'CapitalBridge_token';
+const USER_KEY = 'CapitalBridge_user';
 
 export const storage = {
   getToken: () => localStorage.getItem(TOKEN_KEY),

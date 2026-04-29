@@ -1,6 +1,6 @@
-# CrowdSpring Frontend
+# CapitalBridge Frontend
 
-Production-style crowdfunding frontend built with:
+Production-style e-funding frontend built with:
 
 - React
 - Tailwind CSS

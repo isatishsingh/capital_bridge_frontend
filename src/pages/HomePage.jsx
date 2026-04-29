@@ -74,13 +74,13 @@ export const HomePage = () => {
         <div className="page-shell grid gap-12 py-20 lg:grid-cols-[1.08fr_0.92fr] lg:py-28">
           <div className="relative z-10">
             <div className="inline-flex rounded-full border border-accent/20 bg-accent/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-accent">
-              Built for modern equity crowdfunding
+              Built for modern equity e-funding
             </div>
             <h1 className="mt-8 max-w-3xl font-display text-5xl font-bold leading-[1.04] text-ink sm:text-6xl">
               Back breakout founders with the same clarity you expect from world-class SaaS.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-              CrowdSpring connects investors, startup creators, and admins in one transparent flow:
+              CapitalBridge connects investors, startup creators, and admins in one transparent flow:
               discover projects, manage approvals, process payments, and monitor performance.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
@@ -129,12 +129,12 @@ export const HomePage = () => {
       <section className="page-shell py-10">
         <div className="surface grid gap-8 p-8 lg:grid-cols-[0.8fr_1.2fr] lg:p-10">
           <div>
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent">About CrowdSpring</p>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent">About CapitalBridge</p>
             <h2 className="mt-4 section-title">A platform designed for trust from day one.</h2>
           </div>
           <div>
             <p className="section-copy">
-              CrowdSpring helps founders raise capital responsibly and gives investors a transparent
+              CapitalBridge helps founders raise capital responsibly and gives investors a transparent
               path from discovery to verified payment. Every role gets the tools they need without
               losing the human side of fundraising.
             </p>

@@ -2,9 +2,9 @@ export const AboutPage = () => (
   <div className="page-shell py-16">
     <div className="mx-auto max-w-4xl">
       <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent">About the platform</p>
-      <h1 className="mt-4 section-title">A better operating system for equity crowdfunding.</h1>
+      <h1 className="mt-4 section-title">A better operating system for equity e-funding.</h1>
       <p className="mt-6 text-lg leading-8 text-slate-600">
-        CrowdSpring is built to make startup fundraising feel accountable, measurable, and easy to
+        CapitalBridge is built to make startup fundraising feel accountable, measurable, and easy to
         navigate. Investors get visibility before committing capital, founders manage approvals and
         equity without losing momentum, and admins keep the platform safe.
       </p>
@@ -20,7 +20,7 @@ export const AboutPage = () => (
         <div className="surface p-8">
           <h2 className="text-2xl font-bold text-ink">Vision</h2>
           <p className="mt-4 text-sm leading-7 text-slate-600">
-            Make equity crowdfunding as intuitive and trusted as the best modern financial software,
+            Make equity e-funding as intuitive and trusted as the best modern financial software,
             without sacrificing human judgment or platform governance.
           </p>
         </div>

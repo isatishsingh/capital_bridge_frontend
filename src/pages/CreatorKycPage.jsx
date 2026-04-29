@@ -19,8 +19,9 @@ export const CreatorKycPage = () => {
     event.preventDefault();
     setLoading(true);
     try {
-      await creatorService.saveProfile(form);
-      notify('Verification profile saved. You can create projects once the admin marks KYC as verified.', 'success');
+      const data = await creatorService.saveProfile(form);
+      notify('Verification done successfully', 'success');
+      setForm({phoneNumber: '', panNumber: '', aadhaarNumber: '', gstNumber: '', passportNumber: ''});
     } catch (error) {
       notify(error?.message || 'Unable to save profile.', 'error');
     } finally {

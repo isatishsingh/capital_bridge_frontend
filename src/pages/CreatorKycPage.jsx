@@ -1,29 +1,43 @@
-import { useState } from 'react';
-import { creatorService } from '../services/creatorService';
-import { useToast } from '../components/feedback/ToastProvider';
-import { Button } from '../components/ui/Button';
-import { Card } from '../components/ui/Card';
+import { useState } from "react";
+import { creatorService } from "../services/creatorService";
+import { useToast } from "../components/feedback/ToastProvider";
+import { Button } from "../components/ui/Button";
+import { Card } from "../components/ui/Card";
+import { validateForm } from "../utils/validations";
 
 export const CreatorKycPage = () => {
   const { notify } = useToast();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
-    phoneNumber: '',
-    panNumber: '',
-    aadhaarNumber: '',
-    gstNumber: '',
-    passportNumber: ''
+    phoneNumber: "",
+    panNumber: "",
+    aadhaarNumber: "",
+    gstNumber: "",
+    passportNumber: "",
   });
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const errorMsg = validateForm(form);
+    if (errorMsg) {
+      notify(errorMsg, "error");
+      return;
+    }
+
     setLoading(true);
     try {
       const data = await creatorService.saveProfile(form);
-      notify('Verification done successfully', 'success');
-      setForm({phoneNumber: '', panNumber: '', aadhaarNumber: '', gstNumber: '', passportNumber: ''});
+      notify("Verification done successfully", "success");
+      setForm({
+        phoneNumber: "",
+        panNumber: "",
+        aadhaarNumber: "",
+        gstNumber: "",
+        passportNumber: "",
+      });
     } catch (error) {
-      notify(error?.message || 'Unable to save profile.', 'error');
+      notify(error?.message || "Unable to save profile.", "error");
     } finally {
       setLoading(false);
     }
@@ -32,11 +46,16 @@ export const CreatorKycPage = () => {
   return (
     <div className="page-shell py-16">
       <div className="mx-auto max-w-2xl">
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent">Creator verification</p>
-        <h1 className="mt-3 section-title">Complete KYC before launching a campaign.</h1>
+        <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent">
+          Creator verification
+        </p>
+        <h1 className="mt-3 section-title">
+          Complete KYC before launching a campaign.
+        </h1>
         <p className="mt-4 text-sm leading-7 text-slate-600">
-          Your Spring Boot service requires a verified creator profile before project creation succeeds. Submit the
-          identifiers below; verification status is enforced on the server.
+          Your Spring Boot service requires a verified creator profile before
+          project creation succeeds. Submit the identifiers below; verification
+          status is enforced on the server.
         </p>
 
         <Card className="mt-10 p-8">
@@ -47,7 +66,9 @@ export const CreatorKycPage = () => {
                 className="field-input"
                 required
                 value={form.phoneNumber}
-                onChange={(e) => setForm((c) => ({ ...c, phoneNumber: e.target.value }))}
+                onChange={(e) =>
+                  setForm((c) => ({ ...c, phoneNumber: e.target.value }))
+                }
               />
             </div>
             <div>
@@ -56,7 +77,9 @@ export const CreatorKycPage = () => {
                 className="field-input"
                 required
                 value={form.panNumber}
-                onChange={(e) => setForm((c) => ({ ...c, panNumber: e.target.value }))}
+                onChange={(e) =>
+                  setForm((c) => ({ ...c, panNumber: e.target.value }))
+                }
               />
             </div>
             <div>
@@ -64,7 +87,9 @@ export const CreatorKycPage = () => {
               <input
                 className="field-input"
                 value={form.aadhaarNumber}
-                onChange={(e) => setForm((c) => ({ ...c, aadhaarNumber: e.target.value }))}
+                onChange={(e) =>
+                  setForm((c) => ({ ...c, aadhaarNumber: e.target.value }))
+                }
               />
             </div>
             <div>
@@ -72,7 +97,9 @@ export const CreatorKycPage = () => {
               <input
                 className="field-input"
                 value={form.gstNumber}
-                onChange={(e) => setForm((c) => ({ ...c, gstNumber: e.target.value }))}
+                onChange={(e) =>
+                  setForm((c) => ({ ...c, gstNumber: e.target.value }))
+                }
               />
             </div>
             <div>
@@ -80,11 +107,13 @@ export const CreatorKycPage = () => {
               <input
                 className="field-input"
                 value={form.passportNumber}
-                onChange={(e) => setForm((c) => ({ ...c, passportNumber: e.target.value }))}
+                onChange={(e) =>
+                  setForm((c) => ({ ...c, passportNumber: e.target.value }))
+                }
               />
             </div>
             <Button disabled={loading} type="submit">
-              {loading ? 'Saving...' : 'Save verification profile'}
+              {loading ? "Saving..." : "Save verification profile"}
             </Button>
           </form>
         </Card>

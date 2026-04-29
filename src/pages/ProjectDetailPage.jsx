@@ -277,6 +277,34 @@ export const ProjectDetailPage = () => {
     }
   };
 
+  const handleOpenFounderChat = () => {
+    if (user?.role !== ROLES.INVESTOR) {
+      notify('Only investors can start this chat.', 'error');
+      return;
+    }
+
+    const receiverId = selectedProject?.creatorId ?? selectedProject?.creator?.id;
+    if (!receiverId) {
+      notify('Founder chat is not available for this project yet.', 'error');
+      return;
+    }
+
+    const founderName =
+      selectedProject?.creatorName ||
+      selectedProject?.creator?.name ||
+      selectedProject?.founderName ||
+      'Founder';
+    const projectTitle = selectedProject?.title || 'Project';
+
+    const query = new URLSearchParams({
+      projectId: String(projectId),
+      receiverId: String(receiverId),
+      receiverName: founderName,
+      projectTitle
+    });
+    navigate(`/chats?${query.toString()}`);
+  };
+
   const handleCommentSubmit = async (event) => {
     event.preventDefault();
     if (!user) {
@@ -466,6 +494,11 @@ export const ProjectDetailPage = () => {
               <Button tone="slate" variant="outline" type="button" onClick={handleShare}>
                 Share
               </Button>
+              {user?.role === ROLES.INVESTOR ? (
+                <Button tone="slate" variant="outline" type="button" onClick={handleOpenFounderChat}>
+                  Chat
+                </Button>
+              ) : null}
               <Button tone="danger" variant="outline" type="button" onClick={() => setReportOpen(true)}>
                 Report issue
               </Button>

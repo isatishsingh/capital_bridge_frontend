@@ -12,10 +12,20 @@ import { ROLES } from '../utils/constants';
 const roomKeyOf = ({ conversationId, projectId, receiverId }) =>
   conversationId ? `c:${conversationId}` : `p:${projectId}-${receiverId}`;
 
+const normalizeFounderName = (value) => {
+  const text = String(value || '').trim();
+  if (!text || text.includes('@')) {
+    return 'Founder';
+  }
+  return text;
+};
+
 export const ChatInboxPage = () => {
   const [params, setParams] = useSearchParams();
   const queryProjectId = params.get('projectId');
   const queryReceiverId = params.get('receiverId');
+  const queryReceiverName = params.get('receiverName');
+  const queryProjectTitle = params.get('projectTitle');
   const { user } = useAuthStore();
   const { conversations, rooms, fetchConversations, fetchMessages, sendMessage, loading } = useChatStore();
   const [draft, setDraft] = useState('');
@@ -43,10 +53,17 @@ export const ChatInboxPage = () => {
       if (matched) {
         return matched;
       }
+
+      return {
+        projectId: Number(queryProjectId),
+        receiverId: Number(queryReceiverId),
+        receiverName: normalizeFounderName(queryReceiverName),
+        projectTitle: queryProjectTitle || 'Project'
+      };
     }
 
     return conversations[0];
-  }, [conversations, queryProjectId, queryReceiverId]);
+  }, [conversations, queryProjectId, queryProjectTitle, queryReceiverId, queryReceiverName]);
 
   useEffect(() => {
     if (!activeThread?.projectId || !activeThread?.receiverId) {
@@ -111,9 +128,11 @@ export const ChatInboxPage = () => {
                   String(thread.receiverId) === String(activeThread?.receiverId);
 
                 const isCreator = user?.role === ROLES.CREATOR;
+                const receiverName = normalizeFounderName(thread.receiverName);
+                console.log("thread.receiverName", receiverName);
                 const title = isCreator
-                  ? `${thread.projectTitle || 'Project'} — ${thread.receiverName || 'Investor'}`
-                  : `${thread.receiverName || 'Participant'} — ${thread.projectTitle || 'Project'}`;
+                  ? `${thread.projectTitle || 'Project'} — ${receiverName || 'Investor'}`
+                  : `${receiverName} — ${thread.projectTitle || 'Project'}`;
                 return (
                   <button
                     key={thread.conversationId || `${thread.projectId}-${thread.receiverId}`}
@@ -155,8 +174,8 @@ export const ChatInboxPage = () => {
               <div className="mb-4">
                 <h2 className="text-xl font-bold text-ink">
                   {user?.role === ROLES.CREATOR
-                    ? `${activeThread.projectTitle || 'Project'} — ${activeThread.receiverName || 'Investor'}`
-                    : (activeThread.receiverName || 'Participant') + ' — ' + (activeThread.projectTitle || 'Project')}
+                    ? `${activeThread.projectTitle || 'Project'} — ${normalizeFounderName(activeThread.receiverName) || 'Investor'}`
+                    : `${normalizeFounderName(activeThread.receiverName)} — ${activeThread.projectTitle || 'Project'}`}
                 </h2>
               </div>
 

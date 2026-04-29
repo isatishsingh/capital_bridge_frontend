@@ -1,14 +1,18 @@
 import api from './api';
 import { asArray } from '../utils/normalizers';
 
+const getUserMap = async () => {
+  const { data } = await api.get('/api/users').catch(() => ({ data: [] }));
+  return new Map(asArray(data).map((u) => [String(u.id), u]));
+};
+
 const attachSenderNames = async (messages) => {
   const list = asArray(messages);
   if (!list.length) {
     return list;
   }
 
-  const { data } = await api.get('/api/users').catch(() => ({ data: [] }));
-  const userMap = new Map(asArray(data).map((u) => [String(u.id), u]));
+  const userMap = await getUserMap();
 
   return list.map((item) => ({
     ...item,
@@ -17,10 +21,28 @@ const attachSenderNames = async (messages) => {
   }));
 };
 
+const attachReceiverNames = async (conversations) => {
+  const list = asArray(conversations);
+  if (!list.length) {
+    return list;
+  }
+
+  const userMap = await getUserMap();
+  return list.map((thread) => {
+    const resolvedName = userMap.get(String(thread.receiverId))?.name;
+    return {
+      ...thread,
+      receiverName:
+        resolvedName ||
+        (thread.receiverName && !String(thread.receiverName).includes('@') ? thread.receiverName : 'Founder')
+    };
+  });
+};
+
 export const chatService = {
   getConversations: async () => {
     const { data } = await api.get('/api/chat/conversations');
-    return asArray(data);
+    return attachReceiverNames(data);
   },
   getMessages: async ({ conversationId, projectId, receiverId }) => {
     if (conversationId) {

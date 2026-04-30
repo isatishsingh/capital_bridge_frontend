@@ -42,10 +42,6 @@ export const ChatInboxPage = () => {
   }, [fetchConversations]);
 
   const activeThread = useMemo(() => {
-    if (!conversations.length) {
-      return null;
-    }
-
     if (queryProjectId && queryReceiverId) {
       const matched = conversations.find(
         (item) => String(item.projectId) === String(queryProjectId) && String(item.receiverId) === String(queryReceiverId)
@@ -60,6 +56,10 @@ export const ChatInboxPage = () => {
         receiverName: normalizeFounderName(queryReceiverName),
         projectTitle: queryProjectTitle || 'Project'
       };
+    }
+
+    if (!conversations.length) {
+      return null;
     }
 
     return conversations[0];

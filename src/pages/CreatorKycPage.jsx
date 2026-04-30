@@ -35,13 +35,13 @@ export const CreatorKycPage = () => {
       } else{
         notify("Verification done successfully", "success");
       }
-      // setForm({
-      //   phoneNumber: "",
-      //   panNumber: "",
-      //   aadhaarNumber: "",
-      //   gstNumber: "",
-      //   passportNumber: "",
-      // });
+      setForm({
+        phoneNumber: "",
+        panNumber: "",
+        aadhaarNumber: "",
+        gstNumber: "",
+        passportNumber: "",
+      });
     } catch (error) {
       notify(error?.message || "Unable to save profile.", "error");
     } finally {

@@ -20,6 +20,7 @@ export const CreatorKycPage = () => {
     event.preventDefault();
 
     const errorMsg = validateForm(form);
+
     if (errorMsg) {
       notify(errorMsg, "error");
       return;
@@ -28,14 +29,19 @@ export const CreatorKycPage = () => {
     setLoading(true);
     try {
       const data = await creatorService.saveProfile(form);
-      notify("Verification done successfully", "success");
-      setForm({
-        phoneNumber: "",
-        panNumber: "",
-        aadhaarNumber: "",
-        gstNumber: "",
-        passportNumber: "",
-      });
+      console.log("data => ", data, data?.success, data?.message);
+      if (data?.message) {
+        notify(data.message, "success");
+      } else{
+        notify("Verification done successfully", "success");
+      }
+      // setForm({
+      //   phoneNumber: "",
+      //   panNumber: "",
+      //   aadhaarNumber: "",
+      //   gstNumber: "",
+      //   passportNumber: "",
+      // });
     } catch (error) {
       notify(error?.message || "Unable to save profile.", "error");
     } finally {

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useToast } from '../components/feedback/ToastProvider';
 import { Button } from '../components/ui/Button';
+import { validateForm } from '../utils/validations';
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
@@ -24,6 +25,15 @@ export const RegisterPage = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const errorMsg = validateForm(form);
+
+    if (errorMsg) {
+      notify(errorMsg, "error");
+      return;
+    }
+
+
     try {
       await register(form);
       notify('Account created successfully. Please log in.', 'success');

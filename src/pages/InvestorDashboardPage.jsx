@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useInvestmentStore } from '../store/investmentStore';
+import { PaymentReceiptModal } from '../components/payment/PaymentReceiptModal';
+import { MembershipUpgradeCard } from '../components/subscription/MembershipUpgradeCard';
+import { useToast } from '../components/feedback/ToastProvider';
 import { LoadingState } from '../components/feedback/LoadingState';
 import { EmptyState } from '../components/feedback/EmptyState';
 import { StatCard } from '../components/data/StatCard';
@@ -8,6 +11,7 @@ import { DataTable } from '../components/data/DataTable';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { currency, formatDate, percent } from '../utils/formatters';
+import { useAuthStore } from '../store/authStore';
 
 const statusTone = {
   PENDING: 'warning',
@@ -17,8 +21,36 @@ const statusTone = {
 };
 
 export const InvestorDashboardPage = () => {
-  const { fetchInvestorRequests, investorRequests, completedInvestments, loading } = useInvestmentStore();
+  const {
+    fetchInvestorRequests,
+    fetchReceipt,
+    investorRequests,
+    completedInvestments,
+    loading
+  } = useInvestmentStore();
+  const { notify } = useToast();
   const [requestFilter, setRequestFilter] = useState('ALL');
+  const [receiptOpen, setReceiptOpen] = useState(false);
+  const [paymentReceipt, setPaymentReceipt] = useState(null);
+  const [receiptLoadingId, setReceiptLoadingId] = useState(null);
+  const { user, hydrate } = useAuthStore();
+
+  const handleViewReceipt = async (row) => {
+    if (!row.paymentId) {
+      notify('Receipt is not available for this investment yet.', 'error');
+      return;
+    }
+    setReceiptLoadingId(row.paymentId);
+    try {
+      const receipt = await fetchReceipt(row.paymentId);
+      setPaymentReceipt(receipt);
+      setReceiptOpen(true);
+    } catch (error) {
+      notify(error.message, 'error');
+    } finally {
+      setReceiptLoadingId(null);
+    }
+  };
 
   useEffect(() => {
     fetchInvestorRequests();
@@ -53,6 +85,10 @@ export const InvestorDashboardPage = () => {
       <div className="mb-10">
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent">Investor dashboard</p>
         <h1 className="mt-3 section-title">Track every request, approval, and completed ownership position.</h1>
+      </div>
+
+      <div className="mb-8">
+        {!user?.investorMembershipActive && <MembershipUpgradeCard />}
       </div>
 
       <div className="mb-10 grid gap-5 md:grid-cols-3">
@@ -143,7 +179,10 @@ export const InvestorDashboardPage = () => {
         </section>
 
         <section>
-          <h2 className="mb-5 text-2xl font-bold text-ink">Completed investments</h2>
+          <h2 className="mb-2 text-2xl font-bold text-ink">Investment history</h2>
+          <p className="mb-5 text-sm text-slate-500">
+            Verified payments appear here with downloadable receipt details.
+          </p>
           {sortedCompleted.length ? (
             <DataTable
               columns={[
@@ -166,6 +205,23 @@ export const InvestorDashboardPage = () => {
                   key: 'date',
                   label: 'Investment date',
                   render: (row) => formatDate(row.investmentDate || row.createdAt)
+                },
+                {
+                  key: 'receipt',
+                  label: 'Receipt',
+                  render: (row) =>
+                    row.paymentId ? (
+                      <button
+                        type="button"
+                        className="text-sm font-semibold text-accent hover:text-accentDark"
+                        disabled={receiptLoadingId === row.paymentId}
+                        onClick={() => handleViewReceipt(row)}
+                      >
+                        {receiptLoadingId === row.paymentId ? 'Loading...' : 'View receipt'}
+                      </button>
+                    ) : (
+                      <span className="text-sm text-slate-400">—</span>
+                    )
                 }
               ]}
               rows={sortedCompleted}
@@ -178,6 +234,12 @@ export const InvestorDashboardPage = () => {
           )}
         </section>
       </div>
+
+      <PaymentReceiptModal
+        open={receiptOpen}
+        receipt={paymentReceipt}
+        onClose={() => setReceiptOpen(false)}
+      />
     </div>
   );
 };

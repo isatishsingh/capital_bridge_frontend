@@ -25,14 +25,16 @@ export const validateForm = (form) => {
     return 'Invalid Aadhaar number';
   }
 
+  const gst = form.gstNumber?.trim();
   if (
-    form.gstNumber &&
-    !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(form.gstNumber)
+    gst &&
+    !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/i.test(gst)
   ) {
     return 'Invalid GST number';
   }
 
-  if (form.passportNumber && !/^[A-Z][0-9]{7}$/.test(form.passportNumber)) {
+  const passport = form.passportNumber?.trim();
+  if (passport && !/^[A-Z][0-9]{7}$/i.test(passport)) {
     return 'Invalid passport number';
   }
 

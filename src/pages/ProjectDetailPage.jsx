@@ -16,10 +16,12 @@ import { ReportIssueForm } from '../components/projects/ReportIssueForm';
 import { projectService } from '../services/projectService';
 import { engagementService } from '../services/engagementService';
 import { reportService } from '../services/reportService';
-import { handleApiError } from '../services/api';
+import { handleApiError, isSubscriptionError } from '../services/api';
 import { compactCurrency, currency, formatDate, percent, progressFromAmounts } from '../utils/formatters';
 import { ROLES } from '../utils/constants';
-import { getRazorpayKeyIdError } from '../utils/razorpayKey';
+import { openRazorpayCheckout } from '../utils/razorpayCheckout';
+import { PaymentReceiptModal } from '../components/payment/PaymentReceiptModal';
+import { MembershipUpgradeCard } from '../components/subscription/MembershipUpgradeCard';
 
 const TRANSPARENCY_PREVIEW = 4;
 const roundEquity = (value) => Math.max(Math.round(Number(value || 0) * 10) / 10, 0);
@@ -55,6 +57,8 @@ export const ProjectDetailPage = () => {
   const [engagement, setEngagement] = useState(null);
   const [extrasLoading, setExtrasLoading] = useState(true);
   const [transparencyExpanded, setTransparencyExpanded] = useState(false);
+  const [receiptOpen, setReceiptOpen] = useState(false);
+  const [paymentReceipt, setPaymentReceipt] = useState(null);
 
   const loadExtras = useCallback(async () => {
     if (!projectId) {
@@ -172,75 +176,48 @@ export const ProjectDetailPage = () => {
       setRequestOpen(false);
       await fetchInvestorRequests();
     } catch (error) {
-      notify(error.message, 'error');
+      notify(handleApiError(error, 'Unable to submit investment request.'), 'error');
     }
   };
 
   const handlePayNow = async () => {
-    const keyId = import.meta.env.VITE_RAZORPAY_KEY?.trim();
-    const keyError = getRazorpayKeyIdError(keyId);
-    if (keyError) {
-      notify(keyError, 'error');
-      return;
-    }
-
     try {
       const order = await createOrder({
         investmentRequestId: investorRequest.id
       });
 
-      if (!window.Razorpay) {
-        notify('Razorpay SDK is not loaded. Add the checkout script to enable payments.', 'error');
-        return;
-      }
-
       const orderId = order.orderId || order.id;
-      if (!orderId) {
-        notify('Invalid order from server (missing order id). Check create-order API response.', 'error');
-        return;
-      }
 
-      /**
-       * Orders API: amount/currency are taken from the server-created order.
-       * Passing a mismatched `amount` here breaks checkout (blank methods / Razorpay error UI).
-       */
-      const razorpay = new window.Razorpay({
-        key: keyId,
-        name: 'CapitalBridge',
+      await openRazorpayCheckout({
+        orderId,
         description: selectedProject?.title || 'Investment payment',
-        order_id: orderId,
-        handler: async (response) => {
-          try {
-            await verifyPayment({
-              razorpayOrderId: response.razorpay_order_id,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature
-            });
-            notify('Payment verified successfully.', 'success');
-            fetchInvestorRequests();
-            await fetchProjectById(projectId);
-            await loadExtras();
-          } catch (err) {
-            notify(err?.message || 'Verification failed after payment.', 'error');
+        user,
+        onSuccess: async (response) => {
+          const result = await verifyPayment({
+            razorpayOrderId: response.razorpay_order_id,
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpaySignature: response.razorpay_signature
+          });
+          if (!result?.ok) {
+            throw new Error(result?.message || 'Payment verification failed.');
           }
-        },
-        modal: {
-          ondismiss: () => {
-            /* User closed checkout — not necessarily failure */
+          notify(result.message || 'Payment recorded successfully.', 'success');
+          if (result.receipt) {
+            setPaymentReceipt(result.receipt);
+            setReceiptOpen(true);
           }
-        },
-        prefill: {
-          name: user?.name,
-          email: user?.email
-        },
-        theme: {
-          color: '#0f766e'
+          fetchInvestorRequests();
+          await fetchProjectById(projectId);
+          await loadExtras();
+          return result;
         }
       });
-
-      razorpay.open();
     } catch (error) {
-      notify(error.message, 'error');
+      if (!isSubscriptionError(error)) {
+        notify(handleApiError(error, 'Payment could not be completed.'), 'error');
+      } else {
+        notify(handleApiError(error), 'error');
+      }
     }
   };
 
@@ -506,7 +483,8 @@ export const ProjectDetailPage = () => {
           </Card>
 
           {user?.role === ROLES.INVESTOR ? (
-            <Card id="investor-pay" className="scroll-mt-24">
+            <Card id="investor-pay" className="scroll-mt-24 space-y-6">
+              {!user?.investorMembershipActive && <MembershipUpgradeCard compact />}
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h2 className="text-2xl font-bold text-ink">Investor actions</h2>
@@ -570,6 +548,12 @@ export const ProjectDetailPage = () => {
       <Modal open={reportOpen} title="Report an issue" onClose={() => setReportOpen(false)}>
         <ReportIssueForm loading={reportLoading} onSubmit={handleReport} />
       </Modal>
+
+      <PaymentReceiptModal
+        open={receiptOpen}
+        receipt={paymentReceipt}
+        onClose={() => setReceiptOpen(false)}
+      />
 
       <Modal open={commentOpen} title="Add a comment" onClose={() => setCommentOpen(false)}>
         <form className="space-y-4" onSubmit={handleCommentSubmit}>

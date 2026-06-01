@@ -5,6 +5,7 @@ import { useProjectStore } from "../store/projectStore";
 import { ProjectCard } from "../components/projects/ProjectCard";
 import { TestimonialCard } from "../components/content/TestimonialCard";
 import { FaqAccordion } from "../components/content/FaqAccordion";
+import { useAuthStore } from "../store/authStore";
 
 const testimonials = [
   {
@@ -62,8 +63,10 @@ const faqs = [
 
 export const HomePage = () => {
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
   const { projects, fetchProjects, loading } = useProjectStore();
   const featuredProjects = Array.isArray(projects) ? projects.slice(0, 3) : [];
+
 
   useEffect(() => {
     fetchProjects();
@@ -90,25 +93,27 @@ export const HomePage = () => {
               <Link to="/projects">
                 <Button className="min-w-44">Explore Projects</Button>
               </Link>
-              <Button
-                className="min-w-44"
-                tone="slate"
-                variant="outline"
-                type="button"
-                onClick={() => {
-                  const token = localStorage.getItem("CapitalBridge_user");
+              {(!user || !(user.role === "INVESTOR" || user.role === "ADMIN")) && (
+                <Button
+                  className="min-w-44"
+                  tone="slate"
+                  variant="outline"
+                  type="button"
+                  onClick={() => {
+                    const token = localStorage.getItem("CapitalBridge_user");
 
-                  if (token) {
-                    navigate("creator/projects/create"); // user logged in
-                  } else {
-                    navigate("/register", {
-                      state: { defaultRole: "CREATOR" },
-                    }); // not logged in
-                  }
-                }}
-              >
-                Start Your Project
-              </Button>
+                    if (token) {
+                      navigate("creator/projects/create"); // user logged in
+                    } else {
+                      navigate("/register", {
+                        state: { defaultRole: "CREATOR" },
+                      }); // not logged in
+                    }
+                  }}
+                >
+                  Start Your Project
+                </Button>
+              )}
             </div>
           </div>
 

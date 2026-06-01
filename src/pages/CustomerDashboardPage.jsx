@@ -12,6 +12,8 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { useToast } from '../components/feedback/ToastProvider';
 import { currency, percent, progressFromAmounts } from '../utils/formatters';
+import { MembershipUpgradeCard } from '../components/subscription/MembershipUpgradeCard';
+import { handleApiError } from '../services/api';
 
 const statusTone = {
   PENDING: 'warning',
@@ -31,14 +33,14 @@ export const CustomerDashboardPage = () => {
   } = useInvestmentStore();
   const { notify } = useToast();
   const normalizeStatus = (value) => String(value || '').trim().toUpperCase();
-  const myProjects = projects.filter((project) => String(project.creatorId) === String(user?.id));
+  const myProjects = projects;
 
   useEffect(() => {
     if (!user?.id) {
       return;
     }
 
-    fetchProjects({ creatorId: user.id });
+    fetchProjects({ mine: true });
     fetchCustomerRequests();
   }, [fetchCustomerRequests, fetchProjects, user?.id]);
 
@@ -70,7 +72,7 @@ export const CustomerDashboardPage = () => {
       await updateRequestStatus(requestId, { status });
       notify(`Request ${status.toLowerCase()}.`, 'success');
     } catch (error) {
-      notify(error.message, 'error');
+      notify(handleApiError(error, 'Unable to update request status.'), 'error');
     }
   };
 
@@ -94,6 +96,10 @@ export const CustomerDashboardPage = () => {
         </Link>
       </div>
 
+      <div className="mb-8">
+        {!user?.creatorMembershipActive && <MembershipUpgradeCard />}
+      </div>
+
       <div className="mb-10 grid gap-5 md:grid-cols-4">
         <StatCard label="My projects" value={myProjects.length} hint="Active and historical campaigns" />
         <StatCard label="Funding received" value={currency(summary.totalFunding)} hint="Across your projects" />
@@ -111,7 +117,11 @@ export const CustomerDashboardPage = () => {
           <div className="grid auto-rows-min grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
             {myProjects.map((project) => (
               <div key={project.id} className="flex min-h-0 flex-col gap-4">
-                <ProjectCard project={project} />
+                <ProjectCard
+                  project={project}
+                  detailPath={`/creator/projects/${project.id}`}
+                  showListingStatus
+                />
                 <div className="surface relative z-0 p-5">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>

@@ -30,6 +30,7 @@ export const useAuthStore = create((set) => ({
       set({ user: null, token: null, loading: false, initialized: true });
     }
   },
+  
   login: async (payload) => {
     set({ loading: true, error: null });
     try {
@@ -52,6 +53,7 @@ export const useAuthStore = create((set) => ({
       throw new Error(message);
     }
   },
+
   register: async (payload) => {
     set({ loading: true, error: null });
     try {
@@ -64,6 +66,7 @@ export const useAuthStore = create((set) => ({
       throw new Error(message);
     }
   },
+
   logout: () => {
     storage.clearToken();
     storage.clearUser();

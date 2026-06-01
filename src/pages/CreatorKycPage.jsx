@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { creatorService } from "../services/creatorService";
+import { formatKycError } from "../utils/errorMessages";
 import { useToast } from "../components/feedback/ToastProvider";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { validateForm } from "../utils/validations";
+import { useNavigate } from "react-router-dom";
 
 export const CreatorKycPage = () => {
   const { notify } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     phoneNumber: "",
@@ -28,12 +31,22 @@ export const CreatorKycPage = () => {
 
     setLoading(true);
     try {
-      const data = await creatorService.saveProfile(form);
-      console.log("data => ", data, data?.success, data?.message);
+      const gst = form.gstNumber.trim();
+      const passport = form.passportNumber.trim();
+      const payload = {
+        phoneNumber: form.phoneNumber.trim(),
+        panNumber: form.panNumber.trim().toUpperCase(),
+        aadhaarNumber: form.aadhaarNumber.trim(),
+        ...(gst ? { gstNumber: gst.toUpperCase() } : {}),
+        ...(passport ? { passportNumber: passport.toUpperCase() } : {}),
+      };
+      const data = await creatorService.saveProfile(payload);
       if (data?.message) {
         notify(data.message, "success");
-      } else{
-        notify("Verification done successfully", "success");
+      } else if (data?.isKycVerified) {
+        notify("Verification completed successfully.", "success");
+      } else {
+        notify("Profile saved. Complete all required fields to finish verification.", "success");
       }
       setForm({
         phoneNumber: "",
@@ -42,8 +55,12 @@ export const CreatorKycPage = () => {
         gstNumber: "",
         passportNumber: "",
       });
+
+      if (data?.isKycVerified) {
+        navigate("/creator/projects/create");
+      }
     } catch (error) {
-      notify(error?.message || "Unable to save profile.", "error");
+      notify(formatKycError(error), "error");
     } finally {
       setLoading(false);
     }

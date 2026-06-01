@@ -20,7 +20,9 @@ export const adaptProject = (project) => {
           Number(project.equityAllocated ?? project.equitySold ?? 0),
         0
       ),
-    currentAmount: project.currentAmount ?? project.currentFunding ?? 0
+    currentAmount: project.currentAmount ?? project.currentFunding ?? 0,
+    listingStatus: project.listingStatus ?? project.status ?? 'ACTIVE',
+    openForInvestment: project.openForInvestment ?? true
   };
 };
 

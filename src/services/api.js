@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { formatUserError } from '../utils/errorMessages';
 import { storage } from '../utils/storage';
 
 const resolvedBaseUrl =
@@ -41,42 +42,30 @@ api.interceptors.response.use(
   }
 );
 
-const pickSpringMessage = (data) => {
-  if (!data || typeof data !== 'object') {
+export const handleApiError = (error, fallback = 'Something went wrong. Please try again.') =>
+  formatUserError(error, fallback);
+
+export const getApiErrorCode = (error) => {
+  const data = error?.response?.data;
+  if (!data) {
     return null;
   }
-
-  if (typeof data.message === 'string') {
-    return data.message;
+  if (typeof data === 'object' && data.code) {
+    return data.code;
   }
-
-  if (typeof data.error === 'string') {
-    return data.error;
-  }
-
-  const errors = data.errors;
-  if (Array.isArray(errors) && errors.length) {
-    const first = errors[0];
-    if (typeof first === 'string') {
-      return first;
-    }
-    if (first?.defaultMessage) {
-      return first.defaultMessage;
+  if (typeof data === 'string') {
+    try {
+      return JSON.parse(data).code || null;
+    } catch {
+      return null;
     }
   }
-
-  if (errors && typeof errors === 'object') {
-    const firstKey = Object.keys(errors)[0];
-    const value = firstKey ? errors[firstKey] : null;
-    if (Array.isArray(value) && value.length) {
-      return `${firstKey}: ${value[0]}`;
-    }
-  }
-
   return null;
 };
 
-export const handleApiError = (error, fallback = 'Something went wrong. Please try again.') =>
-  pickSpringMessage(error?.response?.data) || error?.response?.data?.detail || error?.message || fallback;
+export const isSubscriptionError = (error) => {
+  const code = getApiErrorCode(error);
+  return code === 'CREATOR_SUBSCRIPTION_REQUIRED' || code === 'INVESTOR_SUBSCRIPTION_REQUIRED';
+};
 
 export default api;

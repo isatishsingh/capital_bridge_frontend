@@ -28,7 +28,7 @@ export const LoginPage = () => {
       notify('Welcome back.', 'success');
       navigate(location.state?.from?.pathname || roleHome[user.role] || '/');
     } catch (submitError) {
-      notify(submitError.message, 'error');
+      notify(submitError.message || 'Unable to sign in. Check your email and password.', 'error');
     }
   };
 
@@ -63,7 +63,7 @@ export const LoginPage = () => {
             }
           />
         </div>
-        <div>
+        {/* <div>
           <label className="field-label">Role</label>
           <select
             className="field-input"
@@ -74,7 +74,7 @@ export const LoginPage = () => {
             <option value="CREATOR">Customer (creator)</option>
             <option value="ADMIN">Admin</option>
           </select>
-        </div>
+        </div> */}
         {error ? <p className="text-sm font-medium text-rose-600">{error}</p> : null}
         <Button className="w-full" disabled={loading} type="submit">
           {loading ? 'Logging in...' : 'Log In'}

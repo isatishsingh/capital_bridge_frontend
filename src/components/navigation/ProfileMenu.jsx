@@ -67,7 +67,7 @@ export const ProfileMenu = () => {
           className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white py-2 shadow-xl"
           role="menu"
         >
-          <Link
+          {/* <Link
             role="menuitem"
             className="block px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
             to={dashboard}
@@ -85,6 +85,16 @@ export const ProfileMenu = () => {
               Verification (KYC)
             </Link>
           ) : null}
+          {user.role === ROLES.INVESTOR || user.role === ROLES.CREATOR ? (
+            <Link
+              role="menuitem"
+              className="block px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              to="/subscription"
+              onClick={() => setOpen(false)}
+            >
+              Subscription
+            </Link>
+          ) : null} */}
           <Link
             role="menuitem"
             className="block px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"

@@ -8,20 +8,69 @@ export const useInvestmentStore = create((set, get) => ({
   investorRequests: [],
   customerRequests: [],
   completedInvestments: [],
+  investmentHistory: [],
   paymentOrder: null,
   loading: false,
   error: null,
   fetchInvestorRequests: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await investmentService.getInvestorRequests();
+      const [response, history] = await Promise.all([
+        investmentService.getInvestorRequests(),
+        investmentService.getInvestmentHistory().catch(() => [])
+      ]);
+      const historyRows = history.map((row) => ({
+        id: row.investmentId,
+        projectId: row.projectId,
+        projectTitle: row.projectTitle,
+        amount: row.amountInvested,
+        amountInvested: row.amountInvested,
+        equityPercentage: row.equityOwned,
+        equityOwned: row.equityOwned,
+        investmentDate: row.investmentDate,
+        createdAt: row.investmentDate,
+        paymentId: row.paymentId,
+        receiptNumber: row.receiptNumber,
+        razorpayPaymentId: row.razorpayPaymentId,
+        status: 'COMPLETED'
+      }));
       set({
         investorRequests: adaptInvestmentRequests(response?.requested || []),
-        completedInvestments: adaptInvestmentRequests(response?.completed || []),
+        completedInvestments:
+          historyRows.length > 0
+            ? historyRows
+            : adaptInvestmentRequests(response?.completed || []),
+        investmentHistory: historyRows,
         loading: false
       });
     } catch (error) {
       set({ loading: false, error: handleApiError(error, 'Unable to load your investments.') });
+    }
+  },
+  fetchInvestmentHistory: async () => {
+    try {
+      const history = await investmentService.getInvestmentHistory();
+      const historyRows = history.map((row) => ({
+        id: row.investmentId,
+        projectId: row.projectId,
+        projectTitle: row.projectTitle,
+        amount: row.amountInvested,
+        amountInvested: row.amountInvested,
+        equityPercentage: row.equityOwned,
+        equityOwned: row.equityOwned,
+        investmentDate: row.investmentDate,
+        createdAt: row.investmentDate,
+        paymentId: row.paymentId,
+        receiptNumber: row.receiptNumber,
+        razorpayPaymentId: row.razorpayPaymentId,
+        status: 'COMPLETED'
+      }));
+      set({ investmentHistory: historyRows, completedInvestments: historyRows });
+      return historyRows;
+    } catch (error) {
+      const message = handleApiError(error, 'Unable to load investment history.');
+      set({ error: message });
+      throw new Error(message);
     }
   },
   fetchCustomerRequests: async () => {
@@ -90,6 +139,13 @@ export const useInvestmentStore = create((set, get) => ({
       const message = handleApiError(error, 'Unable to verify payment.');
       set({ loading: false, error: message });
       throw new Error(message);
+    }
+  },
+  fetchReceipt: async (paymentId) => {
+    try {
+      return await paymentService.getReceipt(paymentId);
+    } catch (error) {
+      throw new Error(handleApiError(error, 'Unable to load payment receipt.'));
     }
   }
 }));

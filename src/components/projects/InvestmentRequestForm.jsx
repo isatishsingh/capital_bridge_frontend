@@ -49,6 +49,9 @@ export const InvestmentRequestForm = ({ onSubmit, loading, maxEquity = 100 }) =>
           }
         />
         <p className="mt-1 text-xs text-slate-500">Remaining equity: {effectiveMaxEquity}%</p>
+        <p className="mt-1 text-xs text-slate-500">
+          Free plan: up to ₹10,000 per project on one project. Larger or additional investments need Investor Membership.
+        </p>
       </div>
       <Button className="w-full" disabled={loading || effectiveMaxEquity <= 0} type="submit">
         {loading ? 'Submitting...' : effectiveMaxEquity > 0 ? 'Send investment request' : 'No equity left'}

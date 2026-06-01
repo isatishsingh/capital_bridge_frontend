@@ -65,5 +65,9 @@ export const investmentService = {
     const { data } = await api.get('/api/investment-request/customer');
     const filtered = asArray(data).filter((r) => String(r.projectId) === String(projectId));
     return enrichInvestmentRows(filtered);
+  },
+  getInvestmentHistory: async () => {
+    const { data } = await api.get('/api/investments/history');
+    return asArray(data);
   }
 };

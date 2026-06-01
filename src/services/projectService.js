@@ -6,6 +6,10 @@ export const projectService = {
     const { data } = await api.get('/api/projects', { params });
     return data;
   },
+  getMyProjects: async () => {
+    const { data } = await api.get('/api/projects/mine');
+    return data;
+  },
   getProjectById: async (projectId) => {
     const { data } = await api.get(`/api/projects/${projectId}`);
     return data;

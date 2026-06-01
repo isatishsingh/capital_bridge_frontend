@@ -1,19 +1,23 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useProjectStore } from '../store/projectStore';
-import { useToast } from '../components/feedback/ToastProvider';
-import { Button } from '../components/ui/Button';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useProjectStore } from "../store/projectStore";
+import { useToast } from "../components/feedback/ToastProvider";
+import { Button } from "../components/ui/Button";
+import { MembershipUpgradeCard } from "../components/subscription/MembershipUpgradeCard";
+import { handleApiError } from "../services/api";
+import { useAuthStore } from "../store/authStore";
 
 export const CreateProjectPage = () => {
+  const { user, hydrate } = useAuthStore();
   const navigate = useNavigate();
-  const { createProject, loading } = useProjectStore();
+  const { createProject, loading, errorCode } = useProjectStore();
   const { notify } = useToast();
   const [form, setForm] = useState({
-    title: '',
-    description: '',
-    goalAmount: '',
-    totalEquityOffered: '',
-    deadline: ''
+    title: "",
+    description: "",
+    goalAmount: "",
+    totalEquityOffered: "",
+    deadline: "",
   });
 
   const handleSubmit = async (event) => {
@@ -23,20 +27,32 @@ export const CreateProjectPage = () => {
         ...form,
         goalAmount: Number(form.goalAmount),
         totalEquityOffered: Number(form.totalEquityOffered),
-        deadline: form.deadline ? new Date(form.deadline).toISOString() : undefined
+        deadline: form.deadline
+          ? new Date(form.deadline).toISOString()
+          : undefined,
       });
-      notify('Project created successfully.', 'success');
+      notify("Project created successfully.", "success");
       navigate(`/creator/projects/${project.id}`);
     } catch (error) {
-      notify(error.message, 'error');
+      notify(handleApiError(error, "Unable to create project."), "error");
+      if (errorCode === "KYC_NOT_SUBMITTED") {
+        navigate("/creator/verification");
+      }
     }
   };
 
   return (
     <div className="page-shell py-16">
       <div className="mx-auto max-w-4xl">
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent">Create project</p>
-        <h1 className="mt-3 section-title">Launch your campaign with investor-ready details.</h1>
+        <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent">
+          Create project
+        </p>
+        <h1 className="mt-3 section-title">
+          Launch your campaign with investor-ready details.
+        </h1>
+        <div className="mt-8">
+          {!user?.creatorMembershipActive && <MembershipUpgradeCard />}
+        </div>
         <form className="surface mt-10 grid gap-6 p-8" onSubmit={handleSubmit}>
           <div>
             <label className="field-label">Project title</label>
@@ -44,7 +60,12 @@ export const CreateProjectPage = () => {
               className="field-input"
               required
               value={form.title}
-              onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
+              onChange={(event) =>
+                setForm((current) => ({
+                  ...current,
+                  title: event.target.value,
+                }))
+              }
             />
           </div>
           <div>
@@ -54,13 +75,16 @@ export const CreateProjectPage = () => {
               required
               value={form.description}
               onChange={(event) =>
-                setForm((current) => ({ ...current, description: event.target.value }))
+                setForm((current) => ({
+                  ...current,
+                  description: event.target.value,
+                }))
               }
             />
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             <div>
-              <label className="field-label">Goal amount</label>
+              <label className="field-label">Goal amount (INR)</label>
               <input
                 className="field-input"
                 min="1"
@@ -68,9 +92,18 @@ export const CreateProjectPage = () => {
                 type="number"
                 value={form.goalAmount}
                 onChange={(event) =>
-                  setForm((current) => ({ ...current, goalAmount: event.target.value }))
+                  setForm((current) => ({
+                    ...current,
+                    goalAmount: event.target.value,
+                  }))
                 }
               />
+              {!user?.creatorMembershipActive && (
+                <p className="mt-1 text-xs text-slate-500">
+                  Free plan: up to ₹10,000 goal on your first project. Higher
+                  goals need Creator Membership.
+                </p>
+              )}
             </div>
             <div>
               <label className="field-label">Total equity offered</label>
@@ -83,7 +116,10 @@ export const CreateProjectPage = () => {
                 type="number"
                 value={form.totalEquityOffered}
                 onChange={(event) =>
-                  setForm((current) => ({ ...current, totalEquityOffered: event.target.value }))
+                  setForm((current) => ({
+                    ...current,
+                    totalEquityOffered: event.target.value,
+                  }))
                 }
               />
             </div>
@@ -95,12 +131,17 @@ export const CreateProjectPage = () => {
                 required
                 type="datetime-local"
                 value={form.deadline}
-                onChange={(event) => setForm((current) => ({ ...current, deadline: event.target.value }))}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    deadline: event.target.value,
+                  }))
+                }
               />
             </div>
           </div>
           <Button disabled={loading} type="submit">
-            {loading ? 'Creating...' : 'Create project'}
+            {loading ? "Creating..." : "Create project"}
           </Button>
         </form>
       </div>

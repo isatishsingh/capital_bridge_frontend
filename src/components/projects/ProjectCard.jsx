@@ -2,10 +2,19 @@ import { Link } from 'react-router-dom';
 import { Card } from '../ui/Card';
 import { ProgressBar } from '../ui/ProgressBar';
 import { Button } from '../ui/Button';
+import { Badge } from '../ui/Badge';
 import { compactCurrency, percent, progressFromAmounts } from '../../utils/formatters';
 
-export const ProjectCard = ({ project, fillHeight = false }) => {
+const listingTone = {
+  ACTIVE: 'info',
+  FUNDED: 'success',
+  EXPIRED: 'neutral'
+};
+
+export const ProjectCard = ({ project, fillHeight = false, detailPath, showListingStatus = false }) => {
   const progress = progressFromAmounts(project.currentFunding, project.goalAmount);
+  const projectLink = detailPath || `/projects/${project.id}`;
+  const status = project.listingStatus || project.status;
 
   return (
     <Card
@@ -18,6 +27,13 @@ export const ProjectCard = ({ project, fillHeight = false }) => {
               {project.category || 'Startup project'}
             </p>
             <h3 className="mt-2 text-2xl font-bold text-ink">{project.title}</h3>
+            {showListingStatus && status && status !== 'ACTIVE' ? (
+              <div className="mt-2">
+                <Badge tone={listingTone[status] || 'neutral'}>
+                  {status === 'FUNDED' ? 'Fully funded' : status}
+                </Badge>
+              </div>
+            ) : null}
           </div>
           <div className="rounded-2xl bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-600">
             {project.equityOffered || 0}% equity
@@ -51,8 +67,8 @@ export const ProjectCard = ({ project, fillHeight = false }) => {
       </div>
 
       <div className="mt-6">
-        <Link to={`/projects/${project.id}`}>
-          <Button className="w-full">View project</Button>
+        <Link to={projectLink}>
+          <Button className="w-full">{showListingStatus ? 'Manage project' : 'View project'}</Button>
         </Link>
       </div>
     </Card>

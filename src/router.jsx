@@ -25,6 +25,7 @@ import { ContactPage } from './pages/ContactPage';
 import { TermsPage } from './pages/TermsPage';
 import { RouteErrorPage } from './pages/RouteErrorPage';
 import { ChatInboxPage } from './pages/ChatInboxPage';
+import { SubscriptionPage } from './pages/SubscriptionPage';
 
 export const router = createBrowserRouter([
   {
@@ -42,7 +43,10 @@ export const router = createBrowserRouter([
       { path: 'projects/:projectId', element: <ProjectDetailPage /> },
       {
         element: <ProtectedRoute allowedRoles={[ROLES.INVESTOR, ROLES.CREATOR]} />,
-        children: [{ path: 'chats', element: <ChatInboxPage /> }]
+        children: [
+          { path: 'chats', element: <ChatInboxPage /> },
+          { path: 'subscription', element: <SubscriptionPage /> }
+        ]
       },
       {
         element: <ProtectedRoute allowedRoles={[ROLES.INVESTOR]} />,

@@ -28,5 +28,19 @@ export const adminService = {
   blockUser: async (userId, payload) => {
     const { data } = await api.patch(`/admin/users/${userId}/block`, payload);
     return data;
+  },
+  getKycVerifications: async (status = 'PENDING') => {
+    const { data } = await api.get('/admin/kyc/verifications', {
+      params: { status }
+    });
+    return data;
+  },
+  approveKyc: async (profileId) => {
+    const { data } = await api.post(`/admin/kyc/${profileId}/approve`);
+    return data;
+  },
+  rejectKyc: async (profileId) => {
+    const { data } = await api.post(`/admin/kyc/${profileId}/reject`);
+    return data;
   }
 };

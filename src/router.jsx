@@ -20,6 +20,7 @@ import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { AdminProjectsPage } from './pages/AdminProjectsPage';
 import { AdminUsersPage } from './pages/AdminUsersPage';
 import { AdminReportsPage } from './pages/AdminReportsPage';
+import { AdminKycPage } from './pages/AdminKycPage';
 import { CreatorKycPage } from './pages/CreatorKycPage';
 import { ContactPage } from './pages/ContactPage';
 import { TermsPage } from './pages/TermsPage';
@@ -78,7 +79,8 @@ export const router = createBrowserRouter([
           { path: 'admin/dashboard', element: <AdminDashboardPage /> },
           { path: 'admin/projects', element: <AdminProjectsPage /> },
           { path: 'admin/users', element: <AdminUsersPage /> },
-          { path: 'admin/reports', element: <AdminReportsPage /> }
+          { path: 'admin/reports', element: <AdminReportsPage /> },
+          { path: 'admin/kyc', element: <AdminKycPage /> }
         ]
       }
     ]

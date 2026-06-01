@@ -16,7 +16,12 @@ const CODE_HINTS = {
   CREATOR_SUBSCRIPTION_REQUIRED:
     'Upgrade to Creator Membership to list more projects or raise more than ₹10,000.',
   INVESTOR_SUBSCRIPTION_REQUIRED:
-    'Upgrade to Investor Membership to invest in more projects or above ₹10,000 per investment.'
+    'Upgrade to Investor Membership to invest in more projects or above ₹10,000 per investment.',
+  KYC_NOT_SUBMITTED: 'Complete verification (KYC) before creating a project.',
+  KYC_PENDING:
+    'Your verification is under admin review. You can create projects after approval.',
+  KYC_REJECTED:
+    'Your verification was not approved. Update your details and apply again.'
 };
 
 /** Shown when the API returns a known KYC duplicate code (even if message is missing). */

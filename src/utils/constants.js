@@ -45,6 +45,7 @@ export const NAV_LINKS = {
   ],
   ADMIN: [
     // { label: 'Dashboard', to: '/admin/dashboard' },
+    { label: 'Verifications', to: '/admin/kyc' },
     { label: 'Projects', to: '/admin/projects' },
     { label: 'Users', to: '/admin/users' },
     { label: 'Reports', to: '/admin/reports' }

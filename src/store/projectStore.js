@@ -74,7 +74,7 @@ export const useProjectStore = create((set, get) => ({
       const message = handleApiError(error, "Unable to create project.");
       const errorCode = error?.response?.data?.code;
       set({ loading: false, error: message, errorCode: errorCode });
-      throw new Error(message);
+      throw error;
     }
   },
 

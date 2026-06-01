@@ -12,6 +12,7 @@ import { getRoleLabel, getMembershipPlanName } from '../utils/roleLabels';
 import { ROLES } from '../utils/constants';
 import { normalizeUser } from '../utils/auth';
 import { storage } from '../utils/storage';
+import { VerificationProgressTracker } from '../components/profile/VerificationProgressTracker';
 
 export const ProfilePage = () => {
   const { user, setUser } = useAuthStore();
@@ -154,20 +155,12 @@ export const ProfilePage = () => {
             </div>
 
             {role === ROLES.CREATOR ? (
-              <>
-                <div>
-                  <dt className="text-sm text-slate-500">KYC verification</dt>
-                  <dd className="mt-1 font-semibold text-slate-900">
-                    {profile?.kycVerified ? 'Verified' : 'Not verified'}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-slate-500">{getMembershipPlanName(role)}</dt>
-                  <dd className="mt-1 font-semibold text-slate-900">
-                    {membershipActive ? 'Active' : 'Free plan'}
-                  </dd>
-                </div>
-              </>
+              <div>
+                <dt className="text-sm text-slate-500">{getMembershipPlanName(role)}</dt>
+                <dd className="mt-1 font-semibold text-slate-900">
+                  {membershipActive ? 'Active' : 'Free plan'}
+                </dd>
+              </div>
             ) : null}
 
             {role === ROLES.INVESTOR ? (
@@ -189,15 +182,6 @@ export const ProfilePage = () => {
             ) : null}
           </dl>
 
-          {role === ROLES.CREATOR && !profile?.kycVerified ? (
-            <div className="mt-6 rounded-2xl bg-amber-50 p-4 text-sm text-amber-900">
-              Complete verification before creating projects.{' '}
-              <Link className="font-semibold underline" to="/creator/verification">
-                Go to KYC
-              </Link>
-            </div>
-          ) : null}
-
           {(role === ROLES.CREATOR || role === ROLES.INVESTOR) && !membershipActive ? (
             <div className="mt-4 rounded-2xl bg-slate-50 p-4 text-sm text-slate-700">
               <Link className="font-semibold text-accent" to="/subscription">
@@ -206,6 +190,13 @@ export const ProfilePage = () => {
             </div>
           ) : null}
         </Card>
+
+        {role === ROLES.CREATOR ? (
+          <VerificationProgressTracker
+            className="mt-8"
+            kycStatus={profile?.kycStatus || (profile?.kycVerified ? 'APPROVED' : 'NOT_SUBMITTED')}
+          />
+        ) : null}
 
         <form className="surface mt-8 grid gap-6 p-8" onSubmit={handleSubmit}>
           <h2 className="text-xl font-bold text-ink">Update details</h2>

@@ -4,13 +4,13 @@ import { useProjectStore } from "../store/projectStore";
 import { useToast } from "../components/feedback/ToastProvider";
 import { Button } from "../components/ui/Button";
 import { MembershipUpgradeCard } from "../components/subscription/MembershipUpgradeCard";
-import { handleApiError } from "../services/api";
+import { getApiErrorCode, handleApiError } from "../services/api";
 import { useAuthStore } from "../store/authStore";
 
 export const CreateProjectPage = () => {
   const { user, hydrate } = useAuthStore();
   const navigate = useNavigate();
-  const { createProject, loading, errorCode } = useProjectStore();
+  const { createProject, loading } = useProjectStore();
   const { notify } = useToast();
   const [form, setForm] = useState({
     title: "",
@@ -34,8 +34,9 @@ export const CreateProjectPage = () => {
       notify("Project created successfully.", "success");
       navigate(`/creator/projects/${project.id}`);
     } catch (error) {
+      const code = getApiErrorCode(error);
       notify(handleApiError(error, "Unable to create project."), "error");
-      if (errorCode === "KYC_NOT_SUBMITTED") {
+      if (code === "KYC_NOT_SUBMITTED" || code === "KYC_REJECTED") {
         navigate("/creator/verification");
       }
     }

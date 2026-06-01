@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useProjectStore } from '../store/projectStore';
+import { useToast } from '../components/feedback/ToastProvider';
+import { Button } from '../components/ui/Button';
+import { handleApiError } from '../services/api';
 import { investmentService } from '../services/investmentService';
 import { LoadingState } from '../components/feedback/LoadingState';
 import { StatCard } from '../components/data/StatCard';
@@ -11,9 +14,12 @@ import { currency, percent, progressFromAmounts } from '../utils/formatters';
 
 export const CustomerProjectDetailPage = () => {
   const { projectId } = useParams();
-  const { selectedProject, fetchProjectById, loading } = useProjectStore();
+  const navigate = useNavigate();
+  const { notify } = useToast();
+  const { selectedProject, fetchProjectById, removeProject, loading } = useProjectStore();
   const [report, setReport] = useState([]);
   const [reportLoading, setReportLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchProjectById(projectId);
@@ -48,15 +54,47 @@ export const CustomerProjectDetailPage = () => {
     };
   }, [report.length, selectedProject]);
 
+  const handleDelete = async () => {
+    const confirmed = window.confirm(
+      'Delete this project permanently? This cannot be undone.'
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    setDeleting(true);
+    try {
+      await removeProject(projectId);
+      notify('Project deleted.', 'success');
+      navigate('/creator/dashboard');
+    } catch (error) {
+      notify(handleApiError(error, 'Unable to delete project.'), 'error');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   if (loading || !selectedProject || reportLoading) {
     return <div className="page-shell py-16"><LoadingState label="Loading project analytics..." /></div>;
   }
 
   return (
     <div className="page-shell py-16">
-      <div className="mb-10">
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent">Project analytics</p>
-        <h1 className="mt-3 section-title">{selectedProject.title}</h1>
+      <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent">Project analytics</p>
+          <h1 className="mt-3 section-title">{selectedProject.title}</h1>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Link to={`/creator/projects/${projectId}/edit`}>
+            <Button tone="slate" variant="outline">
+              Edit project
+            </Button>
+          </Link>
+          <Button disabled={deleting} onClick={handleDelete} tone="danger" variant="outline">
+            {deleting ? 'Deleting...' : 'Delete project'}
+          </Button>
+        </div>
       </div>
 
       <div className="mb-10 grid gap-5 md:grid-cols-2 xl:grid-cols-5">

@@ -29,10 +29,12 @@ export const projectService = {
     const { data } = await api.post('/api/projects', payload);
     return data;
   },
-  deleteProject: async (projectId, payload = {}) => {
-    const { data } = await api.delete(`/admin/project/${projectId}`, {
-      data: Object.keys(payload).length ? payload : undefined
-    });
+  updateProject: async (projectId, payload) => {
+    const { data } = await api.put(`/api/projects/${projectId}`, payload);
+    return data;
+  },
+  deleteProject: async (projectId) => {
+    const { data } = await api.delete(`/api/projects/${projectId}`);
     return data;
   }
 };

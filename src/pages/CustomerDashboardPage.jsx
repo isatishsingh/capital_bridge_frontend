@@ -137,11 +137,18 @@ export const CustomerDashboardPage = () => {
                       </p>
                     </div>
                   </div>
-                  <Link className="mt-5 inline-block" to={`/creator/projects/${project.id}`}>
-                    <Button tone="slate" variant="outline">
-                      Open analytics
-                    </Button>
-                  </Link>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    <Link to={`/creator/projects/${project.id}`}>
+                      <Button tone="slate" variant="outline">
+                        Open analytics
+                      </Button>
+                    </Link>
+                    <Link to={`/creator/projects/${project.id}/edit`}>
+                      <Button tone="slate" variant="outline">
+                        Edit
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}

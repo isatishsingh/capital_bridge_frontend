@@ -46,7 +46,10 @@ export const CreatorKycPage = () => {
       } else if (data?.isKycVerified) {
         notify("Verification completed successfully.", "success");
       } else {
-        notify("Profile saved. Complete all required fields to finish verification.", "success");
+        notify(
+          "Profile saved. Complete all required fields to finish verification.",
+          "success",
+        );
       }
       setForm({
         phoneNumber: "",
@@ -76,9 +79,9 @@ export const CreatorKycPage = () => {
           Complete KYC before launching a campaign.
         </h1>
         <p className="mt-4 text-sm leading-7 text-slate-600">
-          Your Spring Boot service requires a verified creator profile before
-          project creation succeeds. Submit the identifiers below; verification
-          status is enforced on the server.
+          Complete your KYC verification to unlock project creation and
+          fundraising features. This helps us maintain a secure and trusted
+          platform for all creators and investors.
         </p>
 
         <Card className="mt-10 p-8">

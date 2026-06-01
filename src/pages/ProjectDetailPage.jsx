@@ -483,6 +483,30 @@ export const ProjectDetailPage = () => {
           </Card>
 
           {user?.role === ROLES.INVESTOR ? (
+            <Card>
+              <h2 className="text-2xl font-bold text-ink">Creator GST details</h2>
+              <p className="mt-2 text-sm text-slate-500">
+                GST number from the campaign creator&apos;s verified profile, when provided.
+              </p>
+              <div className="mt-5 rounded-3xl bg-slate-50 p-5">
+                {selectedProject.creatorGstNumber ? (
+                  <>
+                    <p className="text-sm text-slate-500">GSTIN</p>
+                    <p className="mt-2 font-mono text-lg font-semibold tracking-wide text-slate-900">
+                      {selectedProject.creatorGstNumber}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-sm leading-7 text-slate-600">
+                    This campaign creator has not added a GST number to their profile. You can
+                    still invest, but tax invoicing may require contacting the creator directly.
+                  </p>
+                )}
+              </div>
+            </Card>
+          ) : null}
+
+          {user?.role === ROLES.INVESTOR ? (
             <Card id="investor-pay" className="scroll-mt-24 space-y-6">
               {!user?.investorMembershipActive && <MembershipUpgradeCard compact />}
               <div className="flex items-start justify-between gap-4">

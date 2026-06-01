@@ -67,6 +67,14 @@ export const ProfileMenu = () => {
           className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white py-2 shadow-xl"
           role="menu"
         >
+          <Link
+            role="menuitem"
+            className="block px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            to="/profile"
+            onClick={() => setOpen(false)}
+          >
+            My profile
+          </Link>
           {/* <Link
             role="menuitem"
             className="block px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"

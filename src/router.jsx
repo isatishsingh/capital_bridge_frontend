@@ -26,6 +26,8 @@ import { TermsPage } from './pages/TermsPage';
 import { RouteErrorPage } from './pages/RouteErrorPage';
 import { ChatInboxPage } from './pages/ChatInboxPage';
 import { SubscriptionPage } from './pages/SubscriptionPage';
+import { EditProjectPage } from './pages/EditProjectPage';
+import { ProfilePage } from './pages/ProfilePage';
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +43,12 @@ export const router = createBrowserRouter([
       { path: 'terms', element: <TermsPage /> },
       { path: 'projects', element: <ProjectsPage /> },
       { path: 'projects/:projectId', element: <ProjectDetailPage /> },
+      {
+        element: (
+          <ProtectedRoute allowedRoles={[ROLES.INVESTOR, ROLES.CREATOR, ROLES.ADMIN]} />
+        ),
+        children: [{ path: 'profile', element: <ProfilePage /> }]
+      },
       {
         element: <ProtectedRoute allowedRoles={[ROLES.INVESTOR, ROLES.CREATOR]} />,
         children: [
@@ -60,6 +68,7 @@ export const router = createBrowserRouter([
           { path: 'creator/dashboard', element: <CustomerDashboardPage /> },
           { path: 'creator/projects/create', element: <CreateProjectPage /> },
           { path: 'creator/projects/:projectId', element: <CustomerProjectDetailPage /> },
+          { path: 'creator/projects/:projectId/edit', element: <EditProjectPage /> },
           { path: 'creator/verification', element: <CreatorKycPage /> }
         ]
       },

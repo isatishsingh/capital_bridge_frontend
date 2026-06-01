@@ -9,6 +9,7 @@ export const adaptProject = (project) => {
     ...project,
     creatorId: project.creatorId ?? project.creator?.id ?? null,
     creatorEmail: project.creatorEmail ?? project.creator?.email ?? null,
+    creatorGstNumber: project.creatorGstNumber ?? null,
     currentFunding: project.currentFunding ?? project.currentAmount ?? 0,
     equityOffered: project.equityOffered ?? project.totalEquityOffered ?? 0,
     totalEquityOffered: project.totalEquityOffered ?? project.equityOffered ?? 0,

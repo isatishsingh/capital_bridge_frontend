@@ -78,14 +78,43 @@ export const useProjectStore = create((set, get) => ({
     }
   },
 
-  removeProject: async (projectId, payload) => {
+  updateProject: async (projectId, payload) => {
     set({ loading: true, error: null });
     try {
-      await projectService.deleteProject(projectId, payload);
+      const response = await projectService.updateProject(projectId, payload);
+      const updated = adaptProjectDetail(response);
+      set({
+        projects: get().projects.map((project) =>
+          String(project.id) === String(projectId) ? { ...project, ...updated } : project,
+        ),
+        selectedProject:
+          get().selectedProject &&
+          String(get().selectedProject.id) === String(projectId)
+            ? { ...get().selectedProject, ...updated }
+            : get().selectedProject,
+        loading: false,
+      });
+      return updated;
+    } catch (error) {
+      const message = handleApiError(error, "Unable to update project.");
+      set({ loading: false, error: message });
+      throw new Error(message);
+    }
+  },
+
+  removeProject: async (projectId) => {
+    set({ loading: true, error: null });
+    try {
+      await projectService.deleteProject(projectId);
       set({
         projects: get().projects.filter(
           (project) => String(project.id) !== String(projectId),
         ),
+        selectedProject:
+          get().selectedProject &&
+          String(get().selectedProject.id) === String(projectId)
+            ? null
+            : get().selectedProject,
         loading: false,
       });
     } catch (error) {

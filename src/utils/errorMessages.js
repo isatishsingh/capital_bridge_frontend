@@ -20,6 +20,13 @@ const CODE_HINTS = {
 };
 
 /** Shown when the API returns a known KYC duplicate code (even if message is missing). */
+const PASSWORD_ERROR_MESSAGES = {
+  PASSWORD_CURRENT_REQUIRED:
+    'Enter your current password to set a new password.',
+  PASSWORD_CURRENT_INVALID:
+    'Current password is incorrect. Your password was not changed.'
+};
+
 export const KYC_DUPLICATE_MESSAGES = {
   KYC_PHONE_IN_USE:
     'This phone number is already registered with another account. Please use a different phone number.',
@@ -63,6 +70,10 @@ export const formatUserError = (error, fallback = 'Something went wrong. Please 
   if (data) {
     if (data.code && KYC_DUPLICATE_MESSAGES[data.code]) {
       return KYC_DUPLICATE_MESSAGES[data.code];
+    }
+
+    if (data.code && PASSWORD_ERROR_MESSAGES[data.code]) {
+      return PASSWORD_ERROR_MESSAGES[data.code];
     }
 
     if (typeof data.message === 'string' && data.message.trim()) {
